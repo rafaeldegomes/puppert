@@ -17,7 +17,7 @@ const puppeteer = require('puppeteer');
   });
 
   const resultado3 = await page.evaluate(( ) => {
-    return collection = !!document.querySelector("p");
+    return collection = !!document.querySelector("table");
      
   });
   const resultado4 = await page.evaluate(( ) => {
@@ -28,7 +28,7 @@ const puppeteer = require('puppeteer');
   const dimensions = await page.evaluate(() => {
     return {
       display: $('#div1').css('display'),
-      background: $('#div1').css('background-color'),
+      background: $('.demo').text(),
       //deviceScaleFactor: window.devicePixelRatio,
     };
   });
