@@ -24,19 +24,28 @@ const puppeteer = require('puppeteer');
     return collection = document.getElementById("Anchor Id");
      
   });
+
+  const resultado5 = await page.evaluate(( ) => {
+    return collection = !!document.querySelector("title");
+     
+  });
   // Get the "viewport" of the page, as reported by the page.
   const dimensions = await page.evaluate(() => {
     return {
       display: $('#div1').css('display'),
       background: $('.demo').text(),
-      //deviceScaleFactor: window.devicePixelRatio,
+      deviceScaleFactor: $('p'),
+      
     };
   });
 
-  console.log('CSS:', dimensions);
+  console.log('CSS:', dimensions.deviceScaleFactor.length);
+  console.log('CSS:as');
   console.log(resultado)
   console.log(resultado1)
   console.log(resultado3)
   console.log(resultado4)
+  console.log("result 5 ", resultado5)
+  
   await browser.close();
 })();
