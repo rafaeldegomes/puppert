@@ -92,3 +92,4 @@ const puppeteer = require('puppeteer');
   console.log('Sua nota final na atividade é de = ', nota_final.toFixed(1))
   await browser.close();
 })();
+
