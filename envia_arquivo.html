@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Firebase Storage</title>
+  
+</head>
+
+<body>
+
+    <main class="container-fluid">
+        <form method="POST" >
+            <input type="file" name="arquivo">
+            <progress value="0"></progress>
+
+        </form>
+
+        <p id="demo"></p>
+    </main>
+
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>
+    <!-- Inicializa o firebase -->
+    <script>
+        var config = {
+            apiKey: "AIzaSyDiHJlrQ9saIaSE1Nuvm6N0mY60kahEmr8",
+            authDomain: "dev-soulcodeacademy.firebaseapp.com",
+            projectId: "dev-soulcodeacademy",
+            storageBucket: "dev-soulcodeacademy.appspot.com",
+            messagingSenderId: "13399791828",
+            appId: "1:13399791828:web:cf3782fc2843d652a5c341",
+            measurementId: "G-TLXRVHD0NR"
+                    };
+        firebase.initializeApp(config);
+
+
+
+
+
+    </script>
+    <script>
+
+        const storage = firebase.storage();
+        const input = document.querySelector('input[type=file]');
+
+            input.addEventListener('change', (e) => {
+                let file = e.target.files[0];
+
+                const uploadTask = storage.ref(`novosarquivos/${e.target.files[0].name}`)
+                .put(e.target.files[0]);
+
+                uploadTask.on("state_changed", function(snapshot){
+                    let progress = (snapshot.bytesTransferred/snapshot.totalBytes) * 1;
+                    documento.querySelector('progress').value = 10;
+                },function(error){}, function(){
+                    console.log("errro no progresso")
+                });
+            });
+
+
+    </script>
+    
+</body>
+
+</html>

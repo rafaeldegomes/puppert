@@ -1,3 +1,7 @@
+*{
+    background-color: green;
+}
+
 .l1:hover{
     background-color: red;
     color: green;

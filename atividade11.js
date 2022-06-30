@@ -9,10 +9,14 @@ const puppeteer = require('puppeteer');
   const body = await page.evaluate(() => {
     return {
       funcao: pessoa,//
-      verifica_idade: vidade(19)
+      verifica_idade: vidade(19),
+      verifica_soma : soma(10, 5)
     };
   });
 
+  if(body.verifica_soma == 15){
+    con
+  }
   console.log(body.funcao)
   console.log(body.verifica_idade)
 
