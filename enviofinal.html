@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Corretor - Atividade 1</title>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body onload="inicializando()">
+
+    <main class="container-fluid">
+      <h1>Atividade 1 - Exercicio Prático</h1>
+      <p id="email"></p>
+     <p>Crie uma página em HTML contendo as seguintes especificações:</p> 
+
+<li>Monte a estrutura básica, contendo HTML, HEAD, BODY;</li>
+<li>Insira dois títulos a sua escolha utilizando a tag (h1) e dois parágrafos (p).</li>
+      <tr></tr>
+      <br>
+      <div id="botao_atividade">
+      <h1>Vamos corrigir sua atividade ?</h1>
+      <button type="button" class="btn btn-info" id="ocultar">Corrigir Atividade</button>
+      </div>
+
+      <p id="demo" class="alert alert-success" role="alert"></p>
+      <div id="enviando_atividade" class="alert alert-warning" role="alert">
+      
+        
+      <h6>Clique aqui e assista ao video demonstração de como enviar sua atividade</h6>
+      
+        <div class="row">
+        
+            <div class="col-sm-6 col-xs-12">
+              
+                <div class="form-group">
+                    <label for="file-input" style="color:blue;">Adicione o arquivo HTML</label>
+                    <input type="file" id="file-input">
+                    <p class="help-block">Escolha apenas arquivos html</p>
+                    
+                </div>
+            </div>
+      </div>
+      </div>
+      <div id="enviando_css" class="alert alert-info" role="alert">
+         <h3>Clique aqui e assista ao video demonstração de como enviar sua atividade</h3>
+         <div class="row">
+          <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="string-input" style="color:red;">Agora adicione o arquivos CSS</label>
+                    <input type="file" id="string-input">
+                    <p class="help-block">Escolha apenas arquivos.</p>
+                </div>
+            </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase-database.js"></script>
+    <!-- Inicializa o firebase -->
+    
+    <script>
+    
+    function inicializando(){
+      $("#enviando_atividade").hide();
+      $("#enviando_css").hide();
+      $("#demo").hide();
+    }
+    $("#ocultar").click(function () {
+       setTimeout(() => {
+       $("#botao_atividade").hide();
+		$("#enviando_atividade").show();
+       }, 500);
+	});
+        var config = {
+            apiKey: "AIzaSyDiHJlrQ9saIaSE1Nuvm6N0mY60kahEmr8",
+  authDomain: "dev-soulcodeacademy.firebaseapp.com",
+  projectId: "dev-soulcodeacademy",
+  storageBucket: "dev-soulcodeacademy.appspot.com",
+  messagingSenderId: "13399791828",
+  appId: "1:13399791828:web:cf3782fc2843d652a5c341",
+  measurementId: "G-TLXRVHD0NR"
+        };
+        
+        firebase.initializeApp(config);
+        
+        
+      
+
+
+var fileInput = document.getElementById('file-input');
+var stringInput = document.getElementById('string-input');
+
+var ref = firebase.storage().ref('correcao_atividades_web1')
+var url_final = "teste";
+
+var url_html = "nenhum";
+var url_css = "nenhum";
+
+var email_aluno = "naoinformado";
+/**
+ * Metodo que observa mudanças no input de arquivo
+ */
+fileInput.onchange = function (event) {
+    var arquivo = event.target.files[0];
+    var tipo_arquivo = event.target.files[0].type
+    console.log(tipo_arquivo);
+    var nome_imagem = event.target.files[0].name;
+    email_aluno = document.getElementsByTagName("meta")[16].dataset.email;
+    document.getElementById("email").innerHTML = email_aluno;
+
+
+    ref.child('atividades1').child(email_aluno).child(nome_imagem).put(arquivo).then(snapshot =>{
+        console.log('snapshot', snapshot);
+        
+        ref.child('atividades1').child(email_aluno).child(nome_imagem).getDownloadURL().then(url =>{
+            console.log('String para download html', url);
+            url_html = url;
+            console.log("Aguardando Envio do CSS");
+           // recebecorrecao();
+           setTimeout(() => {
+            $("#enviando_atividade").hide();
+           }, 1000);
+           setTimeout(() => {
+            $("#enviando_css").show();
+           }, 2000);
+        });
+    });
+}
+
+/**
+ * Metodo que observa mudanças no input de string
+ */
+stringInput.onchange = function (event) {
+    var arquivo = event.target.files[0];
+
+var nome_imagem = event.target.files[0].name;
+email_aluno = document.getElementsByTagName("meta")[16].dataset.email;
+    document.getElementById("email").innerHTML = email_aluno;
+
+ref.child('atividades1').child(email_aluno).child(nome_imagem).put(arquivo).then(snapshot =>{
+    console.log('snapshot', snapshot);
+
+    ref.child('atividades1').child(email_aluno).child(nome_imagem).getDownloadURL().then(url =>{
+        console.log('String para download css', url);
+        url_css = url;
+        console.log("Aguardando Correção");
+        recebecorrecao();
+    });
+});
+}
+
+function recebecorrecao(){
+   $("#enviando_atividade").hide();
+   $("#enviando_css").hide();
+   $("#demo").show();
+   var nome = document.getElementsByTagName("meta")[16].dataset.name;
+  document.getElementById("demo").innerHTML = nome + " Estamos corrigindo sua atividade....";
+  console.log("entrei na correcao")
+  console.log("URL HTML = ", url_html , " URL CSS" , url_css);
+  
+ $.post("https://us-central1-dev-soulcodeacademy.cloudfunctions.net/preview2",
+  {
+    html: url_html,
+    css: url_css
+  },
+  function(data, status){
+    console.log("Resultado da correção");
+    console.log("Data: " + data + "\nStatus: " + status);
+    $("#demo").show();
+    document.getElementById("demo").innerHTML =data;
+  });
+}
+
+
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+
+</html>

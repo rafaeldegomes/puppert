@@ -14,10 +14,10 @@ var url_final = "teste";
 fileInput.onchange = function (event) {
     var arquivo = event.target.files[0];
 
-    ref.child('atividades').put(arquivo).then(snapshot =>{
+    ref.child(`novosarquivos/${e.target.files[0].name}`).put(arquivo).then(snapshot =>{
         console.log('snapshot', snapshot);
 
-        ref.child('atividades').getDownloadURL().then(url =>{
+        ref.child(`novosarquivos/${e.target.files[0].name}`).getDownloadURL().then(url =>{
             console.log('String para download', url);
             document.getElementById("demo").innerHTML = url;
            

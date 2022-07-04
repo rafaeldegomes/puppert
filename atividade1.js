@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 (async () => {
   const browser = await puppeteer.launch({headless : false});
   const page = await browser.newPage();
-  await page.goto('https://firebasestorage.googleapis.com/v0/b/cryptic-portal-321218.appspot.com/o/atividade1%2Fatividade1?alt=media&token=acacb139-9d02-4db9-8fbf-25c3f3a26323');
+  await page.goto('http://localhost/dados/index.html');
   //await page.screenshot({ path: 'example.png' });
 
  
@@ -11,6 +11,7 @@ const puppeteer = require('puppeteer');
     return {
       h1: $('h1'),
       p: $('p'), 
+      pcolor: $('p').css('color'),
     };
   });
 
@@ -56,7 +57,7 @@ const puppeteer = require('puppeteer');
  var nota_final = nota/media;
  console.log('------------ SUA NOTA ------------')
  console.log('Sua nota final na atividade é de = ', nota_final.toFixed(1))
- response.send("h1tamanho");  
+ //response.send("h1tamanho");  
  await page.screenshot({ path: 'example2.png' });
   await browser.close();
 })();
