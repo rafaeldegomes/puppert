@@ -1,4 +1,4 @@
-
+//$ firebase deploy --only functions:atividade2_modulo2
 const functions = require("firebase-functions");
 const puppeteer = require('puppeteer');
 const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
@@ -1823,8 +1823,8 @@ exports.preview2 = functions
 
      const body2 = await page.evaluate(() => {
         return {
-          verifica_parimpar: $('#resultado_verificacao').html(),
-          verifica_verifica_mes: $('#verifica_mes').html(),
+          verifica_parimpar: $('#nome_completo ').html(),
+          verifica_verifica_mes: $('#quantidade_caractere').html(),
         };
       });
       var nota = 0;
@@ -1834,21 +1834,21 @@ exports.preview2 = functions
     await browser.close(); 
 
       res.write('CORREÇÃO DISPONIVEL <br> <br>')
-      if(body2.verifica_parimpar == "numero é par" || body2.verifica_parimpar == "numero é impar"){
-        console.log("Voce acertou a verificacao do numero PARABENS")
+      if(body2.verifica_parimpar == "SOULCODE"){
+        console.log("Voce acertou em criar a string com o nome SOULCODE PARABENS")
         media= media +1 ;
         nota = nota + 10;
       }else{
-        console.log("** Voce deve criar uma verificação e informar se o numero é par ou impar ")
+        console.log("** Voce deve criar uma variavel com o nome de nome_completo e atribua o valor SOULCODE a ela  ")
         media= media +1 ;
         nota = nota + 0;
       }
-      if(body2.verifica_verifica_mes){
-        console.log("Voce acertou a verificacao do mes do ano PARABENS")
+      if(body2.verifica_verifica_mes == 8){
+        console.log("Voce acertou e o retorno foi 8 caractere PARABENS")
         media= media +1 ;
         nota = nota + 10;
       }else{
-        console.log("** Voce deve criar uma verificação e informar o mes que o usuario digitou ")
+        console.log("** Voce deve contar os caracteres a string nome_completo e salve em uma variavel chamada quantidade_caractere;")
         media= media +1 ;
         nota = nota + 0;
       }
@@ -1897,6 +1897,1315 @@ exports.preview2 = functions
     res.end();  
 
     //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+
+
+  exports.atividade1_modulo2 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          img: $('img'),
+          ul: $('p'), 
+          li: $('a')
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      var img = body2.img.length;
+      var ul = body2.ul.length;
+      var li = body2.li.length;
+      
+      
+    //const screenshot = await page.screenshot();
+    await browser.close(); 
+
+    //res.header({ "Content-Type":  "image/png" });
+    //res.end(screenshot, "binary");
+    //res.setHeader("Access-Control-Allow-Origin", "*");
+      //verifica a tag h1
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+   
+      if(img == 1){
+        res.write('Voce usou a tag IMG, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag IMG<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(ul > 1){
+        res.write('Voce usou a tag UL, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag UL<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(li > 1){
+        res.write('Voce usou a tag LI, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag LI<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+    
+      
+    
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+      
+     
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade1: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade1: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade1: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+
+            
+    res.end();  
+
+    //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+
+
+  exports.atividade2_modulo2 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          img: $('img'),
+          ul: $('p'), 
+          li: $('a')
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      var img = body2.img.length;
+      var ul = body2.ul.length;
+      var li = body2.li.length;
+      
+      
+    //const screenshot = await page.screenshot();
+    await browser.close(); 
+
+    //res.header({ "Content-Type":  "image/png" });
+    //res.end(screenshot, "binary");
+    //res.setHeader("Access-Control-Allow-Origin", "*");
+      //verifica a tag h1
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      res.write('A pagina está responsiva, PARABÈNS<br>')
+      res.write('Voce esta usando Flex Box, PARABÈNS<br>')
+      if(img == 1){
+        res.write('Voce usou a tag IMG, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag IMG<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(ul > 1){
+        res.write('Voce usou a tag UL, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag UL<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(li > 1){
+        res.write('Voce usou a tag LI, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag LI<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+    
+      
+    
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+      
+     
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade2: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade2: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade2: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+
+            
+    res.end();  
+
+    //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+  exports.atividade3_modulo2 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          img: $('img'),
+          ul: $('p'), 
+          li: $('a')
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      var img = body2.img.length;
+      var ul = body2.ul.length;
+      var li = body2.li.length;
+      
+      
+    //const screenshot = await page.screenshot();
+    await browser.close(); 
+
+    //res.header({ "Content-Type":  "image/png" });
+    //res.end(screenshot, "binary");
+    //res.setHeader("Access-Control-Allow-Origin", "*");
+      //verifica a tag h1
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      res.write('A pagina está responsiva, PARABÈNS<br>')
+      res.write('Voce esta usando Flex Box, PARABÈNS<br>')
+      if(img == 1){
+        res.write('Voce usou a tag IMG, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag IMG<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(ul > 1){
+        res.write('Voce usou a tag UL, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag UL<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(li > 1){
+        res.write('Voce usou a tag LI, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou a tag LI<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+    
+      
+    
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+      
+     
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade3: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade3: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade3: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+
+            
+    res.end();  
+
+    //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+  exports.atividade4_modulo2 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var js1 = req.body.js;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+   console.log("JS")
+   console.log(js1)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+     await page.addScriptTag({
+      url: js1
+    });
+     
+
+     const body2 = await page.evaluate(() => {
+        return {
+          fabricacao :  Carro.fabricacao,
+          modelo : Carro.modelo,
+          ano  : Carro.ano
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      //colocar variaveis
+      
+    await browser.close(); 
+
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      if(body2.modelo == "Mustang"  || body.modelo == "mustang"){
+        res.write('ACERTOU o modelo do objeto carro, Parabéns <br>')
+        media= media + 1 ;
+        nota = nota + 10;
+      }else{
+        res.write('ERROU o modelo do objeto carro <br>')
+        media= media + 1 ;
+        nota = nota + 0;
+      }
+    
+      if(body2.fabricacao == "Ford"  || body.fabricacao == "ford"){
+        res.write('ACERTOU a fabricacao do objeto carro, Parabéns <br>')
+        media= media + 1 ;
+        nota = nota + 10;
+      }else{
+        res.write('ERROU a fabricacao do objeto carro <br>')
+        media= media + 1 ;
+        nota = nota + 0;
+      }
+    
+      if(body2.ano == "2022"  ){
+        res.write('ACERTOU o ano do objeto carro, Parabéns  <br>')
+        media= media + 1 ;
+        nota = nota + 10;
+      }else{
+        res.write('ERROU o ano do objeto carro  <br>')
+        media= media + 1 ;
+        nota = nota + 0;
+      }
+
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+      
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade4: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade4: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade4: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+    res.end();  
+
+    //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+  exports.atividade5_modulo2 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var js1 = req.body.js;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+   console.log("JS")
+   console.log(js1)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+     await page.addScriptTag({
+      url: js1
+    });
+     
+
+     const body2 = await page.evaluate(() => {
+        return {
+          classe : new Retangulo(5,10),
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      //colocar variaveis
+      
+    await browser.close(); 
+
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      if(body2.classe.altura == "5"  || body2.classe.altura == 5){
+        res.write('Voce criou a classe e recebeu a altura por parametro no construtor, Parabéns <br>')
+        media= media + 1 ;
+        nota = nota + 10;
+      }else{
+        res.write('ERROU Voce não criou a classe e recebeu a altura por parametro no construtor <br>')
+        media= media + 1 ;
+        nota = nota + 0;
+      }
+    
+      if(body2.classe.largura == "10"  || body2.classe.largura == 10){
+        res.write('Voce criou a classe e recebeu a largura por parametro no construtor, Parabéns <br>')
+        media= media + 1 ;
+        nota = nota + 10;
+      }else{
+        res.write('ERROU Voce não criou a classe e não recebeu a largura parametro no construtor <br>')
+        media= media + 1 ;
+        nota = nota + 0;
+      }
+    
+      
+
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+      
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade5: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade5: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade5: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });
+    res.end();  
+
+    //res.end('<html><body><h1>Hello, World!</h1></body></html>');
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+  //ATIVIDADE 1 E 2 NÃO TEM COMO FAZER
+
+  exports.atividade3_modulo3 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          alert : document.getElementsByClassName('alert alert-primary').length,
+          nav : $('nav').length,
+          container : document.getElementsByClassName('container').length,
+          
+        };
+      });
+      var nota = 0;
+      var media = 0;
+
+    await browser.close(); 
+
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      res.write('A pagina está com rodapé, PARABÈNS<br>')
+
+      if(alert == 1){
+        res.write('Voce usou o ALERT corretamente, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou o ALERT<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(container > 2){
+        res.write('Voce usou mais que 3 CONTAINERS, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('Você deve utilizar mais que 2 CONTAINERS na Pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(nav == 1 || nav > 1){
+        res.write('Voce usou MENU de navegação com NAVBAR, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou um MENU de navegação com NAVBAR<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+  
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade3: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade3: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade3: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });     
+    res.end();  
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+  exports.atividade4_modulo3 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          container : document.getElementsByClassName('container').length,
+          
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      const verifica_nome2 = await page.evaluate(( ) => {
+        return collection = !!document.querySelector("#nome");
+      });
+     
+      if(verifica_nome2 == true){
+        const resultado52 = await page.evaluate(( ) => {
+          const input = document.querySelector("#nome");
+          const texto = input.type;
+          return collection = texto;
+          
+        });
+       
+        res.write("Voçê criou o input com a ID nome, Parabéns")
+        media= media +1 ;
+        nota = nota + 5;
+      }else{
+        res.write("Voçê NÃO criou o input com a ID nome")
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      const verifica_senha = await page.evaluate(( ) => {
+        return collection = !!document.querySelector("#senha");
+      });
+     
+      if(verifica_senha == true){
+        const resultado5 = await page.evaluate(( ) => {
+          const input = document.querySelector("#senha");
+          const texto = input.type;
+          return collection = texto;
+        
+        });
+    
+        res.write("Voçê criou o input com a ID senha, Parabéns")
+        media= media +1 ;
+        nota = nota + 5;
+      }else{
+        res.write("Voçê NÃO criou o input com a ID senha")
+        media= media +1 ;
+        nota = nota + 0;
+      }
+    await browser.close(); 
+
+     
+
+      if(container > 0){
+        res.write('Voce usou mais que 3 CONTAINERS, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('Você deve utilizar mais que 2 CONTAINERS na Pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+     
+  
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade4: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade4: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade4: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });     
+    res.end();  
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+  exports.atividade5_modulo3 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          container : document.getElementsByClassName('container').length,
+          colsm4 : document.getElementsByClassName('col-sm-4').length,
+          colsm8 : document.getElementsByClassName('col-sm-8').length,
+          colmd6 : document.getElementsByClassName('col-md-6').length,
+          collg4 : document.getElementsByClassName('col-lg-4').length,
+          collg8 : document.getElementsByClassName('col-lg-8').length,
+          
+        };
+      });
+      var nota = 0;
+      var media = 0;
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+     
+    await browser.close(); 
+      if(container > 0){
+        res.write('Voce usou o CONTAINER corretamente, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('Você deve utilizar o CONTAINER na Pagina para dividir em diversas partes <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(colsm4 > 0){
+        res.write('Voce usou a divisão de pagina com col-sm-4, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+      else{
+        res.write('Você deve utilizar a divisão de pagina com col-sm-4 <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(colsm8 > 0){
+        res.write('Voce usou a divisão de pagina com col-sm-8, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+      else{
+        res.write('Você deve utilizar a divisão de pagina com col-sm-8 <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(colmd6 > 1){
+        res.write('Voce usou a divisão de pagina com col-md-6, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+      else{
+        res.write('Você deve utilizar a divisão de pagina com col-md-6 <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(collg4 > 0){
+        res.write('Voce usou a divisão de pagina com col-lg-4, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+      else{
+        res.write('Você deve utilizar a divisão de pagina com col-lg-4 <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(collg8 > 0){
+        res.write('Voce usou a divisão de pagina com col-lg-8, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+      else{
+        res.write('Você deve utilizar a divisão de pagina com col-lg-8 <br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+     
+  
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade5: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade5: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade5: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });     
+    res.end();  
+    res.send("<h1>Finalizado</h1>");   
+    res.status(200).end("ola");
+  });
+
+
+  exports.atividade6_modulo3 = functions
+  .runWith({ memory: "2GB", timeoutSeconds: 50 })
+  .https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Methods", "GET");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.set("Content-Type", "application/json");
+    res.type('html');     
+    const browser = await puppeteer.launch({
+      defaultViewport: { width: 1400, height: 800 },
+      headless: true
+    });
+
+    const {
+      query: { q = "" },
+    } = req;
+
+   //console.log(req.query.nome); 
+   var url2 = req.body.html;
+   var css2 = req.body.css;
+   var atividade_recebida = req.body.atividade;
+   var email_aluno = req.body.email;
+
+   console.log("HTML")
+   console.log(url2)
+   console.log("css")
+   console.log(css2)
+
+   var url3 = url2;
+
+  const page = await browser.newPage();
+ 
+   // await page.setContent(q);
+     await page.goto(url3, {  });
+     await page.addStyleTag({url: css2})
+
+     const body2 = await page.evaluate(() => {
+        return {
+          alert : document.getElementsByClassName('alert alert-secondary').length,
+          nav : $('nav').length,
+          container : document.getElementsByClassName('container').length,
+          img : $('img').length,
+          botao : document.getElementsByClassName('btn btn-primary').length,
+          carrocel : document.getElementsByClassName('carousel slide').length,
+        };
+      });
+      var nota = 0;
+      var media = 0;
+
+    await browser.close(); 
+
+      res.write('CORREÇÃO DISPONIVEL <br> <br>')
+      res.write('A pagina está com rodapé, PARABÈNS<br>')
+
+      if(alert == 1){
+        res.write('Voce usou o ALERT corretamente, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou o ALERT<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(container > 2){
+        res.write('Voce usou mais que 3 CONTAINERS, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('Você deve utilizar mais que 2 CONTAINERS na Pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(nav == 1 || nav > 1){
+        res.write('Voce usou MENU de navegação com NAVBAR, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou um MENU de navegação com NAVBAR<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+     
+      if(img == 1 || img > 1){
+        res.write('Voçê usou uma imagem PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('Voçê não utilizou uma imagem em sua pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(carrocel == 1 || carrocel > 1){
+        res.write('Voçê usou MENU de carousel , PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizou carousel na sua pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+
+      if(botao == 1 || botao > 1){
+        res.write('Voce usou o botão solicitado em sua página, PARABÈNS<br>')
+        media= media +1 ;
+        nota = nota + 5;
+      }
+    else{
+        res.write('voce não utilizouo botão em sua pagina<br>');
+        media= media +1 ;
+        nota = nota + 0;
+      }
+      
+      var nota_final = nota/media;
+      res.write('------------ Seu resultado ------------ <br>')
+     res.write('Sua porcentagem final na atividade é de = ' + nota_final.toFixed(0) + '0%<br>')
+     try {
+      initializeApp();
+     } catch {
+      
+     }
+     const db = getFirestore();
+     const docRef = db.collection('correcao_web2').doc(email_aluno);
+
+     await docRef.get().then((doc) => {
+      if (doc.exists) {
+          if(!doc.data()){
+            console.log("Criando um novo arquivo")
+            criado = 1;
+            docRef.set({
+              nota_atividade6: nota_final.toFixed(0)
+            });
+          }else{
+            console.log("UPDATE NO arquivo")
+            criado = 0;
+            docRef.update({
+              nota_atividade6: nota_final.toFixed(0)
+            });
+          }
+      } else {
+        criado = 1;
+        console.log("Criando um novo arquivo")
+        docRef.set({
+          nota_atividade6: nota_final.toFixed(0)
+        });
+        
+      }
+  }).catch((error) => {
+      console.log("Error getting document:", error);
+  });     
+    res.end();  
     res.send("<h1>Finalizado</h1>");   
     res.status(200).end("ola");
   });

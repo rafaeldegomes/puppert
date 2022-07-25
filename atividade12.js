@@ -8,13 +8,12 @@ const puppeteer = require('puppeteer');
 
   const body = await page.evaluate(() => {
     return {
-      verifica_parimpar: $('#resultado_verificacao').html(),
-      verifica_verifica_mes: $('#verifica_mes').html(),
-      
-    };
+      verifica_parimpar: new Retangulo(5,10),
+         };
   });
   var nota = 0;
   var media = 0;
+  console.log(body.verifica_parimpar.altura)
 
   if(body.verifica_parimpar == "numero é par" || body.verifica_parimpar == "numero é impar"){
     console.log("Voce acertou a verificacao do numero PARABENS")
